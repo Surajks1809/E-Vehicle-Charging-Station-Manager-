@@ -183,6 +183,34 @@ public class ChargingStation {
         return cost;
     }
 
+    // Update charging rate
+    public void setChargingRate(double newRate) {
+        if (newRate <= 0) {
+            throw new IllegalArgumentException(
+                    "Charging rate must be greater than zero.");
+        }
+
+        this.ratePerKwh = newRate;
+
+        System.out.printf(
+                "Charging rate updated to $%.2f/kWh%n",
+                newRate);
+    }
+
+    // Update station power rating
+    public void updatePowerRating(double newPowerRating) {
+        if (newPowerRating <= 0) {
+            throw new IllegalArgumentException(
+                    "Power rating must be greater than zero.");
+        }
+
+        this.powerRating = newPowerRating;
+
+        System.out.println(
+                "Power rating updated to " +
+                newPowerRating + " kW.");
+    }
+
     // Overloaded method for backward compatibility
     public double calculateCost(int slotNumber,
                                 int durationHours) {
