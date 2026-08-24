@@ -46,6 +46,59 @@ public class User {
         return phone;
     }
 
+    // Update user profile
+    public void updateName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Name cannot be empty."
+            );
+        }
+
+        this.name = name.trim();
+    }
+
+    public void updateEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Email cannot be empty."
+            );
+        }
+
+        if (!email.contains("@") || !email.contains(".")) {
+            throw new IllegalArgumentException(
+                    "Please enter a valid email address."
+            );
+        }
+
+        this.email = email.trim();
+    }
+
+    public void updatePhone(String phone) {
+        if (phone == null || phone.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Phone number cannot be empty."
+            );
+        }
+
+        if (phone.trim().length() < 10) {
+            throw new IllegalArgumentException(
+                    "Phone number must contain at least 10 digits."
+            );
+        }
+
+        this.phone = phone.trim();
+    }
+
+    public void updateProfile(
+            String name,
+            String email,
+            String phone) {
+
+        updateName(name);
+        updateEmail(email);
+        updatePhone(phone);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -57,7 +110,11 @@ public class User {
         }
 
         User user = (User) obj;
-        return Objects.equals(userId, user.userId);
+
+        return Objects.equals(
+                userId,
+                user.userId
+        );
     }
 
     @Override
