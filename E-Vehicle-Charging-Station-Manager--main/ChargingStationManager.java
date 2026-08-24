@@ -15,7 +15,8 @@ public class ChargingStationManager {
             return;
         }
 
-        String stationId = station.getStationId();
+        String stationId =
+                station.getStationId().trim().toUpperCase();
 
         if (stations.containsKey(stationId)) {
             System.out.println(
@@ -26,6 +27,7 @@ public class ChargingStationManager {
         }
 
         stations.put(stationId, station);
+
         System.out.println(
                 "Charging station " + stationId +
                 " added successfully."
@@ -38,7 +40,8 @@ public class ChargingStationManager {
             return;
         }
 
-        String userId = user.getUserId();
+        String userId =
+                normalizeUserId(user.getUserId());
 
         if (users.containsKey(userId)) {
             System.out.println(
@@ -49,6 +52,7 @@ public class ChargingStationManager {
         }
 
         users.put(userId, user);
+
         System.out.println(
                 "User " + userId +
                 " added successfully."
@@ -56,19 +60,35 @@ public class ChargingStationManager {
     }
 
     public ChargingStation getStation(String stationId) {
-        if (stationId == null || stationId.trim().isEmpty()) {
+        if (stationId == null ||
+                stationId.trim().isEmpty()) {
             return null;
         }
 
-        return stations.get(stationId.trim().toUpperCase());
+        String normalizedId =
+                stationId.trim().toUpperCase();
+
+        return stations.get(normalizedId);
     }
 
     public User getUser(String userId) {
-        if (userId == null || userId.trim().isEmpty()) {
+        if (userId == null ||
+                userId.trim().isEmpty()) {
             return null;
         }
 
-        return users.get(userId.trim());
+        String normalizedId =
+                normalizeUserId(userId);
+
+        return users.get(normalizedId);
+    }
+
+    private String normalizeUserId(String userId) {
+        if (userId == null) {
+            return "";
+        }
+
+        return userId.trim().toUpperCase();
     }
 
     public List<ChargingStation> getAllStations() {
@@ -80,20 +100,29 @@ public class ChargingStationManager {
     }
 
     public void displayAllStationIDs() {
-        System.out.println("\n=== All Charging Stations ===");
+        System.out.println(
+                "\n=== All Charging Stations ==="
+        );
 
         if (stations.isEmpty()) {
-            System.out.println("No stations available.");
+            System.out.println(
+                    "No stations available."
+            );
             return;
         }
 
-        for (ChargingStation station : stations.values()) {
+        for (ChargingStation station :
+                stations.values()) {
+
             System.out.println(
-                    "ID: " + station.getStationId()
-                    + " | Location: " + station.getLocation()
-                    + " | Available Slots: "
-                    + station.getAvailableSlotsCount()
-                    + "/" + station.getTotalSlots()
+                    "ID: " +
+                    station.getStationId() +
+                    " | Location: " +
+                    station.getLocation() +
+                    " | Available Slots: " +
+                    station.getAvailableSlotsCount() +
+                    "/" +
+                    station.getTotalSlots()
             );
         }
     }
@@ -109,20 +138,26 @@ public class ChargingStationManager {
         );
 
         System.out.println(
-                "Total Registered Users: " + users.size()
+                "Total Registered Users: " +
+                users.size()
         );
 
         System.out.println(
-                "Total Stations: " + stations.size()
+                "Total Stations: " +
+                stations.size()
         );
 
         System.out.println();
 
-        for (ChargingStation station : stations.values()) {
+        for (ChargingStation station :
+                stations.values()) {
+
             System.out.println(
                     "Station: " +
                     station.getLocation() +
-                    " (" + station.getStationId() + ")"
+                    " (" +
+                    station.getStationId() +
+                    ")"
             );
 
             System.out.println(
@@ -136,19 +171,27 @@ public class ChargingStationManager {
             );
 
             double utilization =
-                    (1 - (double) station.getAvailableSlotsCount()
+                    (1 - (double)
+                    station.getAvailableSlotsCount()
                     / station.getTotalSlots()) * 100;
 
             System.out.println(
                     "Utilization: " +
-                    String.format("%.1f%%", utilization)
+                    String.format(
+                            "%.1f%%",
+                            utilization
+                    )
             );
 
-            System.out.println("Current Bookings:");
+            System.out.println(
+                    "Current Bookings:"
+            );
 
             boolean hasBookings = false;
 
-            for (ChargingSlot slot : station.getSlots()) {
+            for (ChargingSlot slot :
+                    station.getSlots()) {
+
                 if (!slot.isAvailable()) {
                     hasBookings = true;
 
