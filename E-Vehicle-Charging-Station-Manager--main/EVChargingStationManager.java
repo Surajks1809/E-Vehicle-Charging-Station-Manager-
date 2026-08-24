@@ -72,7 +72,8 @@ public class EVChargingStationManager {
             System.out.println("5. Generate Usage Report");
             System.out.println("6. Calculate Charging Cost");
             System.out.println("7. View Real-time Slot Status");
-            System.out.println("8. Exit");
+            System.out.println("8. Update My Profile");
+            System.out.println("9. Exit");
 
             if (currentUser != null) {
                 System.out.println(
@@ -115,6 +116,10 @@ public class EVChargingStationManager {
                     break;
 
                 case 8:
+                    updateUserProfile();
+                    break;
+
+                case 9:
                     System.out.println(
                             "Thank you for using EV Charging Station Manager!"
                     );
@@ -656,6 +661,40 @@ public class EVChargingStationManager {
                 "\n💳 TOTAL ESTIMATED COST: $%.2f%n",
                 cost
         );
+    }
+
+    private static void updateUserProfile() {
+        if (!checkUserLoggedIn()) {
+            return;
+        }
+
+        System.out.println("\n=== Update My Profile ===");
+        System.out.println("Current Name: " + currentUser.getName());
+        System.out.println("Current Email: " + currentUser.getEmail());
+        System.out.println("Current Phone: " + currentUser.getPhone());
+
+        System.out.print("Enter new name: ");
+        String name = scanner.nextLine().trim();
+
+        System.out.print("Enter new email: ");
+        String email = scanner.nextLine().trim();
+
+        System.out.print("Enter new phone number: ");
+        String phone = scanner.nextLine().trim();
+
+        try {
+            currentUser.updateProfile(name, email, phone);
+
+            System.out.println("Profile updated successfully!");
+            System.out.println("Updated Name: " + currentUser.getName());
+            System.out.println("Updated Email: " + currentUser.getEmail());
+            System.out.println("Updated Phone: " + currentUser.getPhone());
+
+        } catch (IllegalArgumentException e) {
+            System.out.println(
+                    "Profile update failed: " + e.getMessage()
+            );
+        }
     }
 
     private static boolean checkUserLoggedIn() {
