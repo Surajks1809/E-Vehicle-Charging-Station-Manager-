@@ -65,10 +65,9 @@ public class ChargingStationManager {
             return null;
         }
 
-        String normalizedId =
-                stationId.trim().toUpperCase();
-
-        return stations.get(normalizedId);
+        return stations.get(
+                stationId.trim().toUpperCase()
+        );
     }
 
     public User getUser(String userId) {
@@ -77,10 +76,9 @@ public class ChargingStationManager {
             return null;
         }
 
-        String normalizedId =
-                normalizeUserId(userId);
-
-        return users.get(normalizedId);
+        return users.get(
+                normalizeUserId(userId)
+        );
     }
 
     private String normalizeUserId(String userId) {
@@ -97,6 +95,106 @@ public class ChargingStationManager {
 
     public List<User> getAllUsers() {
         return new ArrayList<>(users.values());
+    }
+
+    /**
+     * Returns the total number of charging slots
+     * across all registered stations.
+     */
+    public int getTotalSlotCount() {
+        int totalSlots = 0;
+
+        for (ChargingStation station :
+                stations.values()) {
+            totalSlots += station.getTotalSlots();
+        }
+
+        return totalSlots;
+    }
+
+    /**
+     * Returns the total number of currently
+     * available charging slots.
+     */
+    public int getTotalAvailableSlotCount() {
+        int availableSlots = 0;
+
+        for (ChargingStation station :
+                stations.values()) {
+            availableSlots +=
+                    station.getAvailableSlotsCount();
+        }
+
+        return availableSlots;
+    }
+
+    /**
+     * Returns the total number of occupied slots.
+     */
+    public int getTotalOccupiedSlotCount() {
+        return getTotalSlotCount()
+                - getTotalAvailableSlotCount();
+    }
+
+    /**
+     * Displays a quick summary of the
+     * charging network.
+     */
+    public void displayNetworkStatistics() {
+        int totalSlots =
+                getTotalSlotCount();
+
+        int availableSlots =
+                getTotalAvailableSlotCount();
+
+        int occupiedSlots =
+                getTotalOccupiedSlotCount();
+
+        double utilization = 0.0;
+
+        if (totalSlots > 0) {
+            utilization =
+                    ((double) occupiedSlots
+                    / totalSlots) * 100;
+        }
+
+        System.out.println(
+                "\n=== NETWORK STATISTICS ==="
+        );
+
+        System.out.println(
+                "Total Stations: " +
+                stations.size()
+        );
+
+        System.out.println(
+                "Registered Users: " +
+                users.size()
+        );
+
+        System.out.println(
+                "Total Charging Slots: " +
+                totalSlots
+        );
+
+        System.out.println(
+                "Available Slots: " +
+                availableSlots
+        );
+
+        System.out.println(
+                "Occupied Slots: " +
+                occupiedSlots
+        );
+
+        System.out.printf(
+                "Network Utilization: %.1f%%%n",
+                utilization
+        );
+
+        System.out.println(
+                "=========================="
+        );
     }
 
     public void displayAllStationIDs() {
