@@ -5,19 +5,30 @@ public class ChargingStation {
     private String stationId;
     private String location;
     private int totalSlots;
-    private double powerRating; // in kW
-    private double ratePerKwh = 0.15; // $0.15 per kWh
+    private double powerRating;
+    private double ratePerKwh;
     private List<ChargingSlot> slots;
+
+    private static final double DEFAULT_RATE_PER_KWH = 0.15;
 
     public ChargingStation(String stationId, String location,
                            int totalSlots, double powerRating) {
+        this(stationId, location, totalSlots, powerRating,
+                DEFAULT_RATE_PER_KWH);
+    }
+
+    public ChargingStation(String stationId, String location,
+                           int totalSlots, double powerRating,
+                           double ratePerKwh) {
 
         if (stationId == null || stationId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Station ID cannot be empty.");
+            throw new IllegalArgumentException(
+                    "Station ID cannot be empty.");
         }
 
         if (location == null || location.trim().isEmpty()) {
-            throw new IllegalArgumentException("Station location cannot be empty.");
+            throw new IllegalArgumentException(
+                    "Station location cannot be empty.");
         }
 
         if (totalSlots <= 0) {
@@ -30,21 +41,29 @@ public class ChargingStation {
                     "Power rating must be greater than zero.");
         }
 
+        if (ratePerKwh <= 0) {
+            throw new IllegalArgumentException(
+                    "Charging rate must be greater than zero.");
+        }
+
         this.stationId = stationId.trim().toUpperCase();
         this.location = location.trim();
         this.totalSlots = totalSlots;
         this.powerRating = powerRating;
+        this.ratePerKwh = ratePerKwh;
         this.slots = new ArrayList<>();
 
-        // Initialize all slots as available
         for (int i = 1; i <= totalSlots; i++) {
             slots.add(new ChargingSlot(i));
         }
     }
 
-    public boolean bookSlot(User user, int slotNumber, int durationHours) {
+    public boolean bookSlot(User user, int slotNumber,
+                            int durationHours) {
+
         if (user == null) {
-            System.out.println("A valid user is required for booking.");
+            System.out.println(
+                    "A valid user is required for booking.");
             return false;
         }
 
@@ -54,7 +73,8 @@ public class ChargingStation {
         }
 
         if (durationHours <= 0) {
-            System.out.println("Duration must be greater than 0 hours.");
+            System.out.println(
+                    "Duration must be greater than 0 hours.");
             return false;
         }
 
@@ -65,24 +85,30 @@ public class ChargingStation {
 
             double cost = calculateCost(durationHours);
 
-            System.out.println("Slot " + slotNumber +
+            System.out.println(
+                    "Slot " + slotNumber +
                     " booked successfully for " +
                     durationHours + " hours.");
 
-            System.out.printf("Estimated cost: $%.2f%n", cost);
-            System.out.println("Booking time: " +
+            System.out.printf(
+                    "Estimated cost: $%.2f%n", cost);
+
+            System.out.println(
+                    "Booking time: " +
                     slot.getBookingTimeRange());
 
             return true;
-        } else {
-            System.out.println("Slot " + slotNumber +
-                    " is already occupied.");
-
-            System.out.println("Current status: " +
-                    slot.getDetailedStatus());
-
-            return false;
         }
+
+        System.out.println(
+                "Slot " + slotNumber +
+                " is already occupied.");
+
+        System.out.println(
+                "Current status: " +
+                slot.getDetailedStatus());
+
+        return false;
     }
 
     public boolean cancelSlot(int slotNumber, User user) {
@@ -92,7 +118,8 @@ public class ChargingStation {
         }
 
         if (user == null) {
-            System.out.println("A valid user is required.");
+            System.out.println(
+                    "A valid user is required.");
             return false;
         }
 
@@ -103,13 +130,17 @@ public class ChargingStation {
 
             slot.cancelSlot();
 
-            System.out.println("Booking cancelled successfully.");
-            return true;
-        } else {
             System.out.println(
-                    "No booking found for this user in the specified slot.");
-            return false;
+                    "Booking cancelled successfully.");
+
+            return true;
         }
+
+        System.out.println(
+                "No booking found for this user " +
+                "in the specified slot.");
+
+        return false;
     }
 
     public double calculateCost(int durationHours) {
@@ -119,23 +150,42 @@ public class ChargingStation {
             return 0.0;
         }
 
-        double energyConsumed = powerRating * durationHours;
-        double cost = energyConsumed * ratePerKwh;
+        double energyConsumed =
+                powerRating * durationHours;
 
-        System.out.println("Cost Calculation Details:");
-        System.out.println("  Power Rating: " + powerRating + " kW");
-        System.out.println("  Duration: " + durationHours + " hours");
-        System.out.println("  Energy Consumed: " +
-                energyConsumed + " kWh");
-        System.out.println("  Rate: $" + ratePerKwh + " per kWh");
+        double cost =
+                energyConsumed * ratePerKwh;
 
-        System.out.printf("  Total Cost: $%.2f%n", cost);
+        System.out.println(
+                "Cost Calculation Details:");
+
+        System.out.println(
+                "  Power Rating: " +
+                powerRating + " kW");
+
+        System.out.println(
+                "  Duration: " +
+                durationHours + " hours");
+
+        System.out.println(
+                "  Energy Consumed: " +
+                String.format("%.2f", energyConsumed) +
+                " kWh");
+
+        System.out.println(
+                "  Rate: $" +
+                String.format("%.2f", ratePerKwh) +
+                " per kWh");
+
+        System.out.printf(
+                "  Total Cost: $%.2f%n", cost);
 
         return cost;
     }
 
     // Overloaded method for backward compatibility
-    public double calculateCost(int slotNumber, int durationHours) {
+    public double calculateCost(int slotNumber,
+                                int durationHours) {
         return calculateCost(durationHours);
     }
 
@@ -149,11 +199,12 @@ public class ChargingStation {
 
         System.out.println(
                 "║ Power: " + powerRating +
-                " kW | Rate: $" + ratePerKwh +
-                "/kWh ║");
+                " kW | Rate: $" +
+                ratePerKwh + "/kWh ║");
 
         System.out.println(
-                "║ Slots: " + getAvailableSlotsCount() +
+                "║ Slots: " +
+                getAvailableSlotsCount() +
                 "/" + totalSlots +
                 " available          ║");
 
@@ -163,13 +214,17 @@ public class ChargingStation {
         System.out.println("\n📊 SLOT STATUS:");
 
         for (ChargingSlot slot : slots) {
-            System.out.println(slot.getDetailedStatus());
-            System.out.println("   ─────────────────────────");
+            System.out.println(
+                    slot.getDetailedStatus());
+
+            System.out.println(
+                    "   ─────────────────────────");
         }
     }
 
     public void displayAvailableSlotsWithTime() {
-        System.out.println("\n🕒 AVAILABLE SLOTS WITH TIMING:");
+        System.out.println(
+                "\n🕒 AVAILABLE SLOTS WITH TIMING:");
 
         boolean hasAvailable = false;
 
@@ -178,7 +233,8 @@ public class ChargingStation {
                 hasAvailable = true;
 
                 System.out.println(
-                        "   Slot " + slot.getSlotNumber() +
+                        "   Slot " +
+                        slot.getSlotNumber() +
                         " - ✅ READY TO BOOK");
             }
         }
@@ -197,12 +253,14 @@ public class ChargingStation {
                 hasOccupied = true;
 
                 System.out.println(
-                        "   " + slot.getDetailedStatus());
+                        "   " +
+                        slot.getDetailedStatus());
             }
         }
 
         if (!hasOccupied) {
-            System.out.println("   No occupied slots");
+            System.out.println(
+                    "   No occupied slots");
         }
     }
 
@@ -244,7 +302,9 @@ public class ChargingStation {
     }
 
     public ChargingSlot getSlot(int slotNumber) {
-        if (slotNumber >= 1 && slotNumber <= totalSlots) {
+        if (slotNumber >= 1 &&
+                slotNumber <= totalSlots) {
+
             return slots.get(slotNumber - 1);
         }
 
