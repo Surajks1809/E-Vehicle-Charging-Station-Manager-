@@ -10,29 +10,53 @@ A Java-based console application for managing electric vehicle charging stations
 - Book available charging slots
 - Cancel charging bookings
 - Calculate charging costs
-- Check charging slot availability
-- Generate station usage reports
+- Check real-time charging slot availability
+- Automatically release expired charging slots
+- Update user profiles
+- Update station charging rates and power ratings
+- Generate detailed usage reports
+- View overall network statistics
+- Safe integer input validation
+- Case-insensitive station and user ID lookup
 - Console-based menu system
 
 ## Project Structure
 
-- `EVChargingStationManager.java` - Main application and menu
-- `ChargingStation.java` - Charging station model
-- `ChargingSlot.java` - Charging slot management
-- `ChargingStationManager.java` - Station management operations
-- `User.java` - User information and management
-- `UsageReportGenerator.java` - Usage and station reports
+| File | Description |
+|------|-------------|
+| `EVChargingStationManager.java` | Main application and console menu |
+| `ChargingStation.java` | Charging station model and booking operations |
+| `ChargingSlot.java` | Charging slot and booking management |
+| `ChargingStationManager.java` | Station, user, and network management |
+| `User.java` | User information, validation, and profile management |
+| `UsageReportGenerator.java` | Detailed usage and revenue reports |
 
 ## Technologies Used
 
 - Java
 - Object-Oriented Programming
 - Collections Framework
+- Java Date and Time API
 - Console-based application
+
+## Core Concepts
+
+This project demonstrates several Java programming concepts:
+
+- Classes and Objects
+- Encapsulation
+- Constructors
+- Method Overloading
+- Collections such as `HashMap` and `ArrayList`
+- Exception Handling
+- Input Validation
+- String Processing
+- Date and Time Handling
+- Basic application-level reporting
 
 ## How to Run
 
-Compile the Java files:
+### 1. Clone the repository
 
 ```bash
-javac *.java
+git clone <your-github-repository-url>
