@@ -73,7 +73,8 @@ public class EVChargingStationManager {
             System.out.println("6. Calculate Charging Cost");
             System.out.println("7. View Real-time Slot Status");
             System.out.println("8. Update My Profile");
-            System.out.println("9. Exit");
+            System.out.println("9. View Network Statistics");
+            System.out.println("10. Exit");
 
             if (currentUser != null) {
                 System.out.println(
@@ -120,6 +121,10 @@ public class EVChargingStationManager {
                     break;
 
                 case 9:
+                    displayNetworkStatistics();
+                    break;
+
+                case 10:
                     System.out.println(
                             "Thank you for using EV Charging Station Manager!"
                     );
@@ -695,6 +700,21 @@ public class EVChargingStationManager {
                     "Profile update failed: " + e.getMessage()
             );
         }
+    }
+
+    private static void displayNetworkStatistics() {
+        System.out.println("\n=== Charging Network Statistics ===");
+
+        stationManager.displayNetworkStatistics();
+
+        System.out.println(
+                "Statistics generated at: " +
+                java.time.LocalDateTime.now().format(
+                        java.time.format.DateTimeFormatter.ofPattern(
+                                "yyyy-MM-dd HH:mm:ss"
+                        )
+                )
+        );
     }
 
     private static boolean checkUserLoggedIn() {
