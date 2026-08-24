@@ -11,6 +11,12 @@ public class ChargingSlot {
     private int durationHours;
 
     public ChargingSlot(int slotNumber) {
+        if (slotNumber <= 0) {
+            throw new IllegalArgumentException(
+                    "Slot number must be greater than zero."
+            );
+        }
+
         this.slotNumber = slotNumber;
         this.isAvailable = true;
         this.bookedBy = null;
@@ -20,18 +26,26 @@ public class ChargingSlot {
     }
 
     public void bookSlot(User user, int durationHours) {
+        refreshAvailability();
+
         if (!isAvailable) {
-            System.out.println("This charging slot is already occupied.");
+            System.out.println(
+                    "This charging slot is already occupied."
+            );
             return;
         }
 
         if (user == null) {
-            System.out.println("A valid user is required to book a slot.");
+            System.out.println(
+                    "A valid user is required to book a slot."
+            );
             return;
         }
 
         if (durationHours <= 0) {
-            System.out.println("Charging duration must be greater than 0 hours.");
+            System.out.println(
+                    "Charging duration must be greater than 0 hours."
+            );
             return;
         }
 
@@ -39,7 +53,8 @@ public class ChargingSlot {
         this.bookedBy = user;
         this.bookingTime = LocalDateTime.now();
         this.durationHours = durationHours;
-        this.endTime = this.bookingTime.plusHours(durationHours);
+        this.endTime =
+                this.bookingTime.plusHours(durationHours);
     }
 
     public void cancelSlot() {
@@ -50,18 +65,35 @@ public class ChargingSlot {
         this.durationHours = 0;
     }
 
+    /**
+     * Automatically releases the slot when
+     * the booking period has expired.
+     */
+    private void refreshAvailability() {
+        if (!isAvailable
+                && endTime != null
+                && !LocalDateTime.now().isBefore(endTime)) {
+
+            cancelSlot();
+        }
+    }
+
     public String getRemainingTime() {
+        refreshAvailability();
+
         if (isAvailable || endTime == null) {
             return "Available";
         }
 
         LocalDateTime now = LocalDateTime.now();
 
-        if (now.isAfter(endTime)) {
+        if (!now.isBefore(endTime)) {
             return "Completed";
         }
 
-        Duration duration = Duration.between(now, endTime);
+        Duration duration =
+                Duration.between(now, endTime);
+
         long hours = duration.toHours();
         long minutes = duration.toMinutesPart();
 
@@ -73,7 +105,12 @@ public class ChargingSlot {
     }
 
     public String getBookingTimeRange() {
-        if (isAvailable || bookingTime == null || endTime == null) {
+        refreshAvailability();
+
+        if (isAvailable
+                || bookingTime == null
+                || endTime == null) {
+
             return "Available";
         }
 
@@ -91,6 +128,7 @@ public class ChargingSlot {
     }
 
     public boolean isAvailable() {
+        refreshAvailability();
         return isAvailable;
     }
 
@@ -111,27 +149,38 @@ public class ChargingSlot {
     }
 
     public String getBookingInfo() {
+        refreshAvailability();
+
         if (isAvailable) {
-            return "Slot " + slotNumber + " is available";
+            return "Slot " + slotNumber +
+                    " is available";
         }
 
         DateTimeFormatter formatter =
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                DateTimeFormatter.ofPattern(
+                        "yyyy-MM-dd HH:mm"
+                );
 
         return "Slot " + slotNumber
-                + " booked by " + bookedBy.getName()
-                + " at " + bookingTime.format(formatter)
-                + " for " + durationHours + " hours"
-                + " (Ends: " + endTime.format(formatter) + ")";
+                + " booked by "
+                + bookedBy.getName()
+                + " at "
+                + bookingTime.format(formatter)
+                + " for "
+                + durationHours
+                + " hours"
+                + " (Ends: "
+                + endTime.format(formatter)
+                + ")";
     }
 
     public String getDetailedStatus() {
-        if (isAvailable) {
-            return "Slot " + slotNumber + " - ✅ AVAILABLE";
-        }
+        refreshAvailability();
 
-        DateTimeFormatter timeFormatter =
-                DateTimeFormatter.ofPattern("HH:mm");
+        if (isAvailable) {
+            return "Slot " + slotNumber +
+                    " - ✅ AVAILABLE";
+        }
 
         return String.format(
                 "Slot %d - ⏳ OCCUPIED by %s\n"
